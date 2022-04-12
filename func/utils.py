@@ -53,9 +53,14 @@ def Line_dritection(point_target, point_a, point_b):
 
 class BodyTheta():
     
-    
+    def __new__(cls, img, keypoints):
+        if keypoints[8].all() == 0 or keypoints[1].all() == 0:
+            print("person_inclination can\'t detection.")
+            return None
+        else:
+            return object.__new__(cls)
 
-    def __init__(self, img, keypoints, imgName=None):
+    def __init__(self, img, keypoints):
 
         self.img = img
         self.Neck = keypoints[1]
@@ -68,26 +73,20 @@ class BodyTheta():
         self.MidHip = keypoints[8]
         self.person_inclination = consine_angle(self.MidHip - self.Neck, (1000, 0))
         
-        self.r = 200
-        self.start_angle = 0
-        self.thickness = 30
-        self.txtorg = (200, 3000)
-        self.txt_spacing = 200
-        self.font = cv2.FONT_HERSHEY_COMPLEX 
-        self.fontScale = 5
-        self.txtthickness = 10
-        
-        if imgName.split('_')[0] == '20220224':
-            self.txtorg = (60, 120)
-            self.txt_spacing = 100
-            self.fontScale = 2
-            self.txtthickness = 5
-        elif imgName.split('_')[0] == '20220302':
-            self.txtorg = (60, 120)
-            self.txt_spacing = 100
-            self.fontScale = 2
-            self.txtthickness = 5
+        arm_sacle, _ = abs(keypoints[3] - keypoints[2])
+        height, width, _ = img.shape
 
+        self.start_angle = 0
+        self.font = cv2.FONT_HERSHEY_COMPLEX 
+        self.r = int(arm_sacle * 0.5)
+        self.thickness = int(height / 200)
+        self.txtorg = (60, 120)#(200, 3000)
+        self.txt_spacing = int(height / 20)
+        self.fontScale = int(height / 1000)
+        self.txtthickness = int(height / 500)
+        self.auxiliaryLine_think = int(height / 500)
+        
+        
         self.linetype = cv2.LINE_AA
         self.color_maps = [(255,0,0), 
                             (0,255, 0),
@@ -103,6 +102,9 @@ class BodyTheta():
         centerCoordinates = self.RShoulder
         mainPlane = self.MidHip - self.Neck
         brancePlane = self.RElbow - self.RShoulder
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
 
         theta = consine_angle(mainPlane, brancePlane)
         direction = Direction(brancePlane)
@@ -126,7 +128,7 @@ class BodyTheta():
                     (int(line_src[0]), int(line_src[1])),
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[0],
-                    5)
+                    self.auxiliaryLine_think)
 
             cv2.putText(self.img,
                         'theta:' + str(theta),
@@ -146,6 +148,9 @@ class BodyTheta():
         centerCoordinates = self.LShoulder
         mainPlane = self.MidHip - self.Neck
         brancePlane = self.LElbow - self.LShoulder
+        
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
 
         theta = consine_angle(mainPlane, brancePlane)
         direction = Direction(brancePlane)
@@ -169,7 +174,7 @@ class BodyTheta():
                     (int(line_src[0]), int(line_src[1])),
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[1],
-                    5)
+                    self.auxiliaryLine_think)
 
             cv2.putText(self.img,
                         'theta:' + str(theta),
@@ -189,9 +194,11 @@ class BodyTheta():
         centerCoordinates = self.RElbow
         mainPlane = self.RElbow - self.RShoulder
         brancePlane = self.RWrist - self.RElbow
+        
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
 
         theta = consine_angle(mainPlane, brancePlane)
-
         rsholder_direction = Direction(mainPlane)
         # relbow_direction = Direction(brancePlane)
         relbow_direction = Line_dritection(self.RWrist, self.RElbow, self.RShoulder)
@@ -227,7 +234,7 @@ class BodyTheta():
                     (int(line_src[0]), int(line_src[1])),
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[2],
-                    5)
+                    self.auxiliaryLine_think)
 
             cv2.putText(self.img,
                         'theta:' + str(abs(theta)),
@@ -248,8 +255,9 @@ class BodyTheta():
         mainPlane = self.LElbow - self.LShoulder
         brancePlane = self.LWrist - self.LElbow
 
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
         theta = consine_angle(mainPlane, brancePlane)
-
         lsholder_direction = Direction(mainPlane)
         # lelbow_direction = Direction(brancePlane)
         lelbow_direction = Line_dritection(self.LWrist, self.LElbow, self.LShoulder)
@@ -281,7 +289,7 @@ class BodyTheta():
                     (int(line_src[0]), int(line_src[1])),
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[3],
-                    5)
+                    self.auxiliaryLine_think)
 
             cv2.putText(self.img,
                         'theta:' + str(abs(theta)),
