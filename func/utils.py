@@ -21,7 +21,11 @@ def consine_angle(vector_a, vector_b):
     vector_b_distance = np.square(vector_b).sum() ** 0.5
     vector_distance_dot = vector_a_distance * vector_b_distance
     cross = vector_dot / vector_distance_dot
-    cosTheta = math.acos(cross)
+    try:
+        cosTheta = math.acos(cross)
+    except ValueError:
+        print(ValueError)
+        cosTheta = 0
     theta = math.degrees(cosTheta)
 
     return int(theta)
@@ -71,6 +75,16 @@ class BodyTheta():
         self.LElbow = keypoints[6]
         self.LWrist = keypoints[7]
         self.MidHip = keypoints[8]
+        self.RHip = keypoints[9]
+        self.RKnee = keypoints[10]
+        self.RAnkle = keypoints[11]
+        self.LHip = keypoints[12]
+        self.LKnee = keypoints[13]
+        self.LAnkle = keypoints[14]
+        self.LBigToe = keypoints[19]
+        self.LHeel = keypoints[21]
+        self.RBigToe = keypoints[22]
+        self.RHeel = keypoints[24]
         self.person_inclination = consine_angle(self.MidHip - self.Neck, (1000, 0))
         
         arm_sacle, _ = abs(keypoints[3] - keypoints[2])
@@ -97,7 +111,7 @@ class BodyTheta():
                             ()]
         self.horizont = (100, 0)
 
-    def RElbowr_theta(self, draw=False):
+    def RShoulder_theta(self, draw=False):
 
         centerCoordinates = self.RShoulder
         mainPlane = self.MidHip - self.Neck
@@ -129,7 +143,7 @@ class BodyTheta():
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[0],
                     self.auxiliaryLine_think)
-
+            print(thickness)
             cv2.putText(self.img,
                         'theta:' + str(theta),
                         self.txtorg, 
@@ -143,7 +157,7 @@ class BodyTheta():
             
         return theta        
 
-    def LElbowr_theta(self, draw=False):
+    def LShoulder_theta(self, draw=False):
 
         centerCoordinates = self.LShoulder
         mainPlane = self.MidHip - self.Neck
@@ -189,7 +203,7 @@ class BodyTheta():
             
         return theta        
 
-    def RWrist_theta(self, draw=False):
+    def RElbow_theta(self, draw=False):
 
         centerCoordinates = self.RElbow
         mainPlane = self.RElbow - self.RShoulder
@@ -249,7 +263,7 @@ class BodyTheta():
             
         return abs(theta) 
 
-    def LWrist_theta(self, draw=False):
+    def LElbow_theta(self, draw=False):
 
         centerCoordinates = self.LElbow
         mainPlane = self.LElbow - self.LShoulder
@@ -303,5 +317,71 @@ class BodyTheta():
         self.txtorg = (self.txtorg[0], self.txtorg[1] + self.txt_spacing)
             
         return abs(theta)
+        
+    def RHip_theta(self,):
+        
+        mainPlane = self.MidHip - self.Neck
+        brancePlane = self.RKnee - self.RHip
 
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+
+        theta = consine_angle(mainPlane, brancePlane)
+
+        return theta
+
+    def LHip_theta(self,):
+        
+        mainPlane = self.MidHip - self.Neck
+        brancePlane = self.LKnee - self.LHip
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+
+        theta = consine_angle(mainPlane, brancePlane)
+        return theta
     
+    def RKnee_theta(self,):
+        
+        mainPlane = self.RKnee - self.RHip
+        brancePlane = self.RAnkle - self.RKnee
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+        
+        theta = consine_angle(mainPlane, brancePlane)
+        return theta
+
+    def LKnee_theta(self,):
+
+        mainPlane = self.LKnee - self.LHip
+        brancePlane = self.LAnkle - self.LKnee
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+
+        theta = consine_angle(mainPlane, brancePlane)
+        return theta
+
+    def RAnkle_theta(self,):
+
+        mainPlane = self.RAnkle - self.RKnee
+        brancePlane = self.RBigToe - self.RHeel
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+
+        theta = consine_angle(mainPlane, brancePlane)
+        return theta
+    
+    def LAnkle_theta(self,):
+
+        mainPlane = self.LAnkle - self.LKnee
+        brancePlane = self.LBigToe - self.LHeel
+
+        if mainPlane.all() == 0 or brancePlane.all() == 0:
+            return "Keypoint can\'t detection."
+
+        theta = consine_angle(mainPlane, brancePlane)
+        return theta
+        
