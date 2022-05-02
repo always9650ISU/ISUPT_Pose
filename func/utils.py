@@ -143,7 +143,7 @@ class BodyTheta():
                     (int(line_dst[0]), int(line_dst[1])),
                     self.color_maps[0],
                     self.auxiliaryLine_think)
-            print(thickness)
+            # print(thickness)
             cv2.putText(self.img,
                         'theta:' + str(theta),
                         self.txtorg, 
