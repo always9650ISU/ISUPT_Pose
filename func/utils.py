@@ -372,7 +372,7 @@ class BodyTheta():
             return "Keypoint can\'t detection."
 
         theta = consine_angle(mainPlane, brancePlane)
-        return theta
+        return theta - 90
     
     def LAnkle_theta(self,):
 
@@ -383,5 +383,4 @@ class BodyTheta():
             return "Keypoint can\'t detection."
 
         theta = consine_angle(mainPlane, brancePlane)
-        return theta
-        
+        return theta - 90
