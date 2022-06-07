@@ -13,14 +13,15 @@ RollingWindowSize = 6
 
 for FullName in os.listdir(jsonDir):
     print(FullName) 
-    filename, _ = FullName.split('.')
+    filename, extension = FullName.split('.')
     filepath = os.path.join(jsonDir, FullName)
     output = os.path.join(pltDir, filename + '.jpg')
+    if extension == 'gitignore':
+        continue
     with open(filepath, 'r') as f: 
         data = json.load(f)
 
-    if extension == 'gitignore':
-        continue
+
     
     data_length = len(data)
     data_time = [i for i in range(data_length)]
