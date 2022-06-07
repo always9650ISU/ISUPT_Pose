@@ -27,6 +27,9 @@ for FullName in os.listdir(InputDir):
     outputpath = os.path.join(OutputDir, FullName)
     keypoints_theta = {}
     
+    if extension == 'gitignore':
+        continue
+
     try:
         with open(json_file, 'r') as f:
             data = json.load(f)

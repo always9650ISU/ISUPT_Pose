@@ -18,6 +18,9 @@ for FullName in os.listdir(jsonDir):
     output = os.path.join(pltDir, filename + '.jpg')
     with open(filepath, 'r') as f: 
         data = json.load(f)
+
+    if extension == 'gitignore':
+        continue
     
     data_length = len(data)
     data_time = [i for i in range(data_length)]
